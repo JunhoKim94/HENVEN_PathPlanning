@@ -1,20 +1,21 @@
-#Don't using thit sys for your computers
-"""
+#Don't using this sys for your computers
+'''
 import sys
 sys.path.remove("/home/junho/catkin_ws/devel/lib/python2.7/dist-packages")
 sys.path.remove("/opt/ros/kinetic/lib/python2.7/dist-packages")
-"""
+'''
 
 #start here
 
 import numpy as np
 import cv2
+import Image_util as iu
 
-path = "./Lane_image/blue_lane.jpg"
+path = "./Lane_Detection/Lane_image/blue_lane.jpg"
 
 img_o = cv2.imread(path)
 img = cv2.resize(img_o,dsize=(480,380),interpolation=cv2.INTER_LINEAR)
-
+img_brightness = iu.Gamma_correction(img, 5)
 #Gaussian Blur for noise
 #img = cv2.GaussianBlur(img, (5,5),2)
 
@@ -45,6 +46,6 @@ img_bit = cv2.bitwise_or(img_bit,r_th)
 
 img_concat_rgb = cv2.hconcat((ori,img_bit,img))
 
-cv2.imshow("Window",img_concat)
+cv2.imshow("Window",img_brightness)
 cv2.waitKey(0)
 cv2.destroyAllWindows()

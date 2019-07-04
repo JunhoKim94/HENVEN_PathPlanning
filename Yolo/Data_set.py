@@ -1,16 +1,17 @@
 #Don't use
-'''
+
 import sys
 sys.path.remove("/home/junho/catkin_ws/devel/lib/python2.7/dist-packages")
 sys.path.remove("/opt/ros/kinetic/lib/python2.7/dist-packages")
-'''
+
 #start here
 import os
 import cv2
 import random
 import numpy as np
-
+import Image_util as iu
 #setting for making Image
+
 index = 1
 lightness = 4
 size = 5
