@@ -1,11 +1,14 @@
+import sys
+sys.path.remove("/home/junho/catkin_ws/devel/lib/python2.7/dist-packages")
+sys.path.remove("/opt/ros/kinetic/lib/python2.7/dist-packages")
+
 import numpy as np
 import cv2
 import socket
 import time
 
 from cam_util import get_img
-from lane_util import warp_image, binary_pipeline, morphologic_process, get_poly_val, fit_track_lanes, \
-    callback_ths, crop_points, draw_lane_img, visualize_images
+from lane_util import warp_image, binary_pipeline, morphologic_process, get_poly_val, fit_track_lanes,callback_ths, crop_points, draw_lane_img, visualize_images
 
 
 params_cam = {
@@ -58,7 +61,8 @@ def binary_pipeline_test():
 
         # load the image
         # img_cam = cv2.imread('./image_sample/image_straight.jpg')
-        img_cam = cv2.imread('./image_sample/image_curve.jpg')
+        img_cam = cv2.imread('/home/junho/Autonomous/HENVEN_PathPlanning/Lane_Detection/Lane_image/lane_1.jpg')
+        img_cam = cv2.resize(img_cam,dsize=(480,320),interpolation=cv2.INTER_LINEAR)
         
         img_binary = binary_pipeline(img_cam, th_light, (80, 95)) #lane
 
@@ -130,5 +134,5 @@ def main():
 
 
 if __name__ == '__main__':
-    #binary_pipeline_test()
-    main()
+    binary_pipeline_test()
+    #main()

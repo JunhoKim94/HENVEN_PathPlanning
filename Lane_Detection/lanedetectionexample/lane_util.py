@@ -238,7 +238,6 @@ def crop_points(xi, yi, img_w, img_h):
     crop the lidar points on images within width and height
     \n xi, yi : xy components of lidar points w.r.t a 2d plane
     \n img_w, img_h : a width and a height of a image from a camera
-
     '''
     #cut the lidar points out of width
 
