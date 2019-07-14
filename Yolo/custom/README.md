@@ -1,7 +1,7 @@
 #HOW-TO
 
 1. Separate train and test dataset through [Split](/Yolo/Split_Train_Test.py)
-2. Fill [objects.name](./object.names) with needed classes in order with the image names. E.g 0 -> first class
+2. Fill [objects.names](./objects.names) with needed classes in order with the image names. E.g 0 -> first class
 3. Set right paths in /Yolo/Custom/trainer.data
 4. Edits needed for the YOLO cfg files:
     - Classes - num of needed classes
