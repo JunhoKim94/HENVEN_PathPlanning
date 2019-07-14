@@ -7,10 +7,11 @@ HOW-TO
     - Classes - num of needed classes
     - Max batches = (classes*2000). eg: 3 classes -> max_batches = 6000
     - Filters=(classes + 5)x3
-    - Anchors --> "./darknet detector calc_anchors custom/trainer.data -num_of_clusters 6 -width 416 -height 416"
+    - Anchors --> ./darknet detector calc_anchors custom/trainer.data -num_of_clusters 6 -width 416 -height 416
 
 
 
 
 Training:
 Testing: 
+./darknet detector test custom/trainer.data custom/yolov3.cfg backup/[filename].weights [imgname].jpg
