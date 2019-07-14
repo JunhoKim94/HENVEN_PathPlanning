@@ -16,3 +16,6 @@ Training:
 
 Testing: 
 `./darknet detector test custom/trainer.data custom/yolov3.cfg backup/[filename].weights [imgname].jpg`
+
+Check accuracy mAP:
+`./darknet detector map custom/trainer.data custom/[].cfg backup/[].weights`
