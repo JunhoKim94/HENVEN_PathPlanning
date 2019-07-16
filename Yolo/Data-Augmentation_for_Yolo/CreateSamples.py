@@ -105,6 +105,7 @@ def main():
 
 
         count=0
+
         lower = np.array([bgColor - bgThresh, bgColor - bgThresh, bgColor - bgThresh])
         upper = np.array([bgColor + bgThresh, bgColor + bgThresh, bgColor + bgThresh])
         ImgModifier=SampImgModifier(sampleImg,dimensions,lower,upper,bgColor)
@@ -151,16 +152,16 @@ def main():
             if(flag==True):
                 outputName= filename + '_'+ str(count)
                 cv.imwrite(os.path.join(outputfolder,str(outputName + '.jpg')),finalImg)
-                with open(os.path.join(outputfolder,str(outputName + '.txt')),'w') as f:
-                    details='0 '+' '.join(str(coord) for coord in np.reshape(finalBoundRect,4))+'\n'
+                with open(os.path.join("./Data/target/TrainingData/images",str(outputName + '.txt')),'w') as f:
+                    details=outputName[0]+'  '+' '.join(str(coord) for coord in np.reshape(finalBoundRect,4))+'\n'
                     f.write(details)
                 count=count+1
+                print(count)
             else:
                 outputName = filename + '_' + str(count)
                 cv.imwrite(os.path.join(outputfolder, str(outputName + '.jpg')), ImgModifier.modifiedImg)
                 #cv.imshow("modified",ImgModifier.modifiedImg)
                 cv.waitKey(100)
-
             ImgModifier.resetFlags()
 
 if __name__ == '__main__':
