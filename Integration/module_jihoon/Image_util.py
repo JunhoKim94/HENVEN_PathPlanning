@@ -6,7 +6,7 @@ boundaries = [
     (np.array([161, 155, 84], dtype="uint8"), np.array([179, 255, 255], dtype="uint8")), # red1
     (np.array([0, 100, 70], dtype="uint8"), np.array([20, 255, 255], dtype="uint8")), # red2
     (np.array([94, 80, 200], dtype="uint8"), np.array([126, 255, 255], dtype="uint8")), # blue
-    (np.array([25, 60, 100], dtype="uint8"), np.array([51, 255, 255], dtype="uint8")), #yellow
+    (np.array([0, 60, 100], dtype="uint8"), np.array([51, 255, 255], dtype="uint8")), #yellow
     (np.array([200, 0, 140], dtype="uint8"), np.array([255, 255, 255], dtype="uint8")) # white
 ]
 
@@ -64,13 +64,13 @@ def DetectColor(img, color): # color = b, r, y, w
         print("In Image_util.py DetectColor - Wrong color Argument")
     return mask
 
-'''
+
 def Gamma_correction(img, correction):
     img = img/255.0
     img = cv2.pow(img, correction)
     img = np.uint8(img*255)
     return img
-'''
+
 
 def CloseImage(img):
     return cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
@@ -80,6 +80,7 @@ def OpenImage(img):
 
 def Make_Binary(img):
     img = reg_of_int(img)
+    img = Gamma_correction(img, 2)
     warp_img = Warp_Image(img)
     img1 = np.zeros_like(warp_img)
     img2 = DetectColor(warp_img, 'b')
@@ -92,5 +93,5 @@ def Make_Binary(img):
     img2 = cv2.cvtColor(img2, cv2.COLOR_GRAY2BGR)
     img1 = cv2.add(img1, img2)
     
-    img_ret = CloseImage(img1)
+    img_ret = OpenImage(img1)
     return img_ret
