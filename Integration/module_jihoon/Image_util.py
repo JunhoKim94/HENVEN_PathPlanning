@@ -6,7 +6,7 @@ boundaries = [
     (np.array([161, 155, 84], dtype="uint8"), np.array([179, 255, 255], dtype="uint8")), # red1
     (np.array([0, 100, 70], dtype="uint8"), np.array([20, 255, 255], dtype="uint8")), # red2
     (np.array([94, 80, 200], dtype="uint8"), np.array([126, 255, 255], dtype="uint8")), # blue
-    (np.array([0, 60, 100], dtype="uint8"), np.array([51, 255, 255], dtype="uint8")), #yellow
+    (np.array([0, 40, 60], dtype="uint8"), np.array([20, 255, 255], dtype="uint8")), #yellow
     (np.array([200, 0, 140], dtype="uint8"), np.array([255, 255, 255], dtype="uint8")) # white
 ]
 
@@ -17,17 +17,17 @@ line_colors = [
     [255, 255, 255] # white
 ]
 
-kernel = np.ones((5,5), np.uint8)
+kernel = np.ones((7,7), np.uint8)
 
 # points for perspective_transform
-pts1 = np.float32([(536, 471), (247, 651), (1094, 651), (771, 471)])
+pts1 = np.float32([(790, 898), (470, 1080), (1610, 1080), (1290, 898)])
 pts2 = np.float32([(480, 0), (480, 1000), (960, 1000), (960, 0)])
 
 # 디스플레이 창 크기
 display = (1440, 960)
 
 # roi 범위 설정
-vertics = np.array([[(536, 482), (247, 651), (1094, 651), (771, 471)]]
+vertics = np.array([[(790, 898), (470, 1080), (1610, 1080), (1290, 898)]]
                        ,np.int32)
 #720, 960
 def Warp_Image(img):
@@ -42,6 +42,9 @@ def reg_of_int(img):
     mask = np.zeros_like(img)
     cv2.fillPoly(mask, vertics, (255,255,255))
     masked = cv2.bitwise_and(img, mask)
+    mask2 = masked
+    mask2 =cv2.resize(mask2, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
+    cv2.imshow('mask', mask2)
     return masked
 
 def DetectColor(img, color): # color = b, r, y, w
@@ -64,13 +67,11 @@ def DetectColor(img, color): # color = b, r, y, w
         print("In Image_util.py DetectColor - Wrong color Argument")
     return mask
 
-
 def Gamma_correction(img, correction):
     img = img/255.0
     img = cv2.pow(img, correction)
     img = np.uint8(img*255)
     return img
-
 
 def CloseImage(img):
     return cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
@@ -80,18 +81,23 @@ def OpenImage(img):
 
 def Make_Binary(img):
     img = reg_of_int(img)
-    img = Gamma_correction(img, 2)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     warp_img = Warp_Image(img)
     img1 = np.zeros_like(warp_img)
     img2 = DetectColor(warp_img, 'b')
-    img2=cv2.cvtColor(img2, cv2.COLOR_GRAY2BGR)
+    img2 = cv2.cvtColor(img2, cv2.COLOR_GRAY2BGR)
+    img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2HSV)
     img1 = cv2.add(img1, img2)
     img2 = DetectColor(warp_img, 'y')
     img2 = cv2.cvtColor(img2, cv2.COLOR_GRAY2BGR)
+    img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2HSV)
     img1 = cv2.add(img1, img2)
     img2 = DetectColor(warp_img, 'w')
     img2 = cv2.cvtColor(img2, cv2.COLOR_GRAY2BGR)
+    img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2HSV)
     img1 = cv2.add(img1, img2)
     
-    img_ret = OpenImage(img1)
+  #  img_ret = OpenImage(img1)
+    img_ret = CloseImage(img1)
+    img_ret = cv2.cvtColor(img_ret, cv2.COLOR_HSV2BGR)
     return img_ret
