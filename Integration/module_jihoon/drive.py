@@ -18,7 +18,7 @@ while True:
     if not ret:
         print('비디오 끝')
         break
-    cv2.waitKey(10)
+    cv2.waitKey(3)
     img1 = iu.Make_Binary(img)
     img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
 

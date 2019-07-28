@@ -4,7 +4,7 @@ import numpy as np
 #왼쪽라인 보정상수
 line_constant1 = -50
 #오른쪽라인 보정상수
-line_constant2 = +25
+line_constant2 = +10
 #조사창 최대 픽셀 수
 max_pixel_num = 700
 #조사창 최소 픽셀 수
@@ -13,6 +13,22 @@ min_pixel_num = 300
 shift_pixel = 410
 #다항식 차수
 poly_order = 3
+#차이 상수(전 점 포인트와 새로운 점 포인트 간 픽셀 거리차)
+del_cons = 50
+
+#이전 조사창 중점 위치 저장하는 배열, 조사창 개수가 바뀔 때 변경해줘야함
+x1_points1 = []
+x1_points1 = [None for _ in range(15)]
+x1_points2 = []
+x1_points2 = [None for _ in range(15)]
+x1_points3 = []
+x1_points3 = [None for _ in range(15)]
+x2_points1 = []
+x2_points1 = [None for _ in range(15)]
+x2_points2 = []
+x2_points2 = [None for _ in range(15)]
+x2_points3 = []
+x2_points3 = [None for _ in range(15)]
 
 def draw_points(img, x_points, y_points, color, thickness=3):
     if(len(x_points) != len(y_points)):
@@ -26,7 +42,7 @@ def draw_points(img, x_points, y_points, color, thickness=3):
     except:
         print("error2")
 
-def make_route_points(img, n_windows, x1_default = 575, x2_default = 270):
+def make_route_points(img, n_windows, x1_default = 1300, x2_default = 270):
     #cv2.imshow('img', img)
     h, w = img.shape[:2]
     result = np.zeros_like(img)
@@ -102,14 +118,56 @@ def make_route_points(img, n_windows, x1_default = 575, x2_default = 270):
             x1_points[i]=x2_points[i]-shift_pixel
         elif(x1_points[i]!=None and x2_points[i]==None):
             x2_points[i]=x1_points[i]+shift_pixel
+            
+    #이전 조사창 위치를 저장하는 배열을 이용해 총 3개의 위치 평균
+    global x1_points1, x1_points2, x1_points3, x2_points1, x2_points2, x2_points3        
+    x1_points3 = x1_points2
+    x1_points2 = x1_points1
+    x1_points1 = x1_points
+    for i in range(len(x1_points)):
+        count = 0
+        if(x1_points1[i] != None):
+            count += 1
+        else:
+            x1_points1[i] = x1_default
+            x1_points[i] = x1_points1[i]
+            count += 1
+        if(x1_points2[i] != None):
+            x1_points[i]+=x1_points2[i]
+            count += 1
+        if(x1_points3[i] != None):
+            x1_points[i]+=x1_points3[i]
+            count += 1
+        if(count!=0):
+            x1_points[i] = int(x1_points[i]/count)
+                
+    x2_points3 = x2_points2
+    x2_points2 = x2_points1
+    x2_points1 = x2_points
+    for i in range(len(x2_points)):
+        count = 0
+        if(x2_points1[i] == None):
+            x2_points[i]= x2_default
+            count +=1
+        else:
+            count += 1
+        if(x2_points2[i] != None):
+            x2_points1[i]+=x2_points2[i]
+            count += 1
+        if(x1_points3[i] != None):
+            x2_points1[i]+=x2_points3[i]
+            count += 1
+        if(count!=0):
+            x2_points[i] = int(x2_points1[i]/count)
     
+        
     img1 = cv2.cvtColor(img1, cv2.COLOR_GRAY2BGR)    
     img2 = cv2.cvtColor(img2, cv2.COLOR_GRAY2BGR)    
     img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
     draw_points(img, x1_points, y_points, [0, 255, 0])
     draw_points(img, x2_points, y_points, [0, 0, 255])
 
-   # img = draw_lane(img, x1_points, x2_points, y_points)
+    img = draw_lane(img, x1_points, x2_points, y_points)
 
     cv2.imshow('result', img)
 
@@ -160,4 +218,4 @@ def make_LIDAR_points(img, lidar):
     img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
     draw_points(img, rx, ry, [0, 0, 255])
 
-   # cv2.imshow("LIDAR", img)
+    cv2.imshow("LIDAR", img)

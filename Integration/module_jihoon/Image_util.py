@@ -43,8 +43,6 @@ def reg_of_int(img):
     cv2.fillPoly(mask, vertics, (255,255,255))
     masked = cv2.bitwise_and(img, mask)
     mask2 = masked
-    mask2 =cv2.resize(mask2, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
-    cv2.imshow('mask', mask2)
     return masked
 
 def DetectColor(img, color): # color = b, r, y, w
