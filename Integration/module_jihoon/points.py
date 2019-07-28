@@ -13,8 +13,8 @@ min_pixel_num = 300
 shift_pixel = 410
 #다항식 차수
 poly_order = 3
-#차이 상수(전 점 포인트와 새로운 점 포인트 간 픽셀 거리차)
-del_cons = 50
+#차이 상수(아래 점 포인트와 위의 점 포인트 간 최대 픽셀 거리차)
+del_cons = 30
 
 #이전 조사창 중점 위치 저장하는 배열, 조사창 개수가 바뀔 때 변경해줘야함
 x1_points1 = []
@@ -159,8 +159,17 @@ def make_route_points(img, n_windows, x1_default = 1300, x2_default = 270):
             count += 1
         if(count!=0):
             x2_points[i] = int(x2_points1[i]/count)
+
+    for i in range(len(x1_points)-1):
+        if(abs(x1_points[len(x1_points)-i-1] - x1_points[len(x1_points)-i-2])
+           > del_cons):
+            x1_points[len(x1_points)-i-2] = x1_points[len(x1_points)-i-1]
+            
+    for i in range(len(x2_points)-1):
+        if(abs(x2_points[len(x2_points)-i-1] - x2_points[len(x2_points)-i-2])
+           > del_cons):
+            x2_points[len(x2_points)-i-2] = x2_points[len(x2_points)-i-1]
     
-        
     img1 = cv2.cvtColor(img1, cv2.COLOR_GRAY2BGR)    
     img2 = cv2.cvtColor(img2, cv2.COLOR_GRAY2BGR)    
     img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
