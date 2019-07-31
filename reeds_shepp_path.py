@@ -10,13 +10,15 @@ def draw_point(point, arrow_length=0.5):
     plt.plot(point[0], point[1], 'o')
     plt.arrow(point[0], point[1], arrow_length * cos(point[2]), arrow_length * sin(point[2]), head_width=0.05)
 
+
 class ReedsSheppPath(object):
     def __init__(self, start, end, r=1.0):
         self._s = start
         self._e = end
         self._r = r
         self._paths = []
-
+    # 주행 모드에 SSS 같은 직선 주행을 추가해야 할듯
+    # CSS, SSC 등
     def calc_paths(self):
         x, y, phi = self.calc_end()
         self._paths += self.CSC(x, y, phi)
@@ -435,6 +437,7 @@ class ReedsSheppPath(object):
 
     @classmethod
     def gen_path(cls, s, path, r=1.0, section=True):
+        #section이 True면 커브와 직선을 나누어서 데이터를 받고 False면 한꺼번에 하나의 list로 받음
         def calc_TurnCenter(point, dir='l', r=1.0):
             if dir == 'l':
                 ang = point[2] + pi / 2
@@ -467,6 +470,7 @@ class ReedsSheppPath(object):
                     r_y.append(ps_y)
                     r_yaw.append(ps_yaw)
                 else:
+                    #list 는 더하면 합쳐짐 [1,2] + [1,3,4] = [1,2,1,3,4]
                     r_x += ps_x
                     r_y += ps_y
                     r_yaw += ps_yaw
@@ -497,7 +501,7 @@ class ReedsSheppPath(object):
             ps_y = []
             ps_yaw = []
         return r_x, r_y, r_yaw
-
+#x,y의 path가 L,R,S 로 나뉘어서 리스트로 반환됨
 def test1():
     for i in range(0, 360, 30):
         plt.figure()

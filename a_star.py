@@ -4,6 +4,7 @@
 from mapinfo import MapInfo
 from copy import deepcopy
 import math
+import time
 
 class AStar(object):
     def __init__(self, start, end, map_info):
@@ -21,7 +22,8 @@ class AStar(object):
         for p in plist:
             if not self._map_info.is_collision(point=p):
                 yield p
-
+                
+#좌표들을 순서를 바꿔서 반환(시작부터로)
     def reconstruct_path(self):
         pt = self._e
         path = []
@@ -31,6 +33,7 @@ class AStar(object):
         return path[::-1]
 
     def run(self, display=False):
+        st = time.time()
         h = self.distance(self._s, self._e)
         self._openset[self._s] = {'g': 0, 'h': h, 'f': h, 'camefrom': None}
         while self._openset:
@@ -40,6 +43,7 @@ class AStar(object):
             if self.distance(x, self._e) < 1.0:
                 if x != self._e:
                     self._closeset[self._e] = {'camefrom': x}
+                    #print(time.time() - st)
                 return True
             if display:
                 self._map_info.close = x
