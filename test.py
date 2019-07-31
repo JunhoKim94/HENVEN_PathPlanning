@@ -31,3 +31,8 @@ if plan.run(display=False):
     m.path = plan.reconstruct_path()
     path2 = plan.reconstruct_path()
 '''
+for i in range(5):
+    print(i)
+    if i <3:
+        continue
+    print('바보')

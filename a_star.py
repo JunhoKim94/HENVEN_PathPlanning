@@ -34,16 +34,17 @@ class AStar(object):
 
     def run(self, display=False):
         st = time.time()
+        epsilon = 1.5
         h = self.distance(self._s, self._e)
         self._openset[self._s] = {'g': 0, 'h': h, 'f': h, 'camefrom': None}
         while self._openset:
             x = min(self._openset, key=lambda key: self._openset[key]['f'])
-            self._closeset[x] = deepcopy(self._openset[x])
-            del self._openset[x]
+            self._closeset[x] = self._openset.pop(x)
+            
             if self.distance(x, self._e) < 1.0:
                 if x != self._e:
                     self._closeset[self._e] = {'camefrom': x}
-                    #print(time.time() - st)
+                    print('Astar',time.time() - st)
                 return True
             if display:
                 self._map_info.close = x
@@ -58,7 +59,8 @@ class AStar(object):
                 else:
                     tentative_is_better = False
                 if tentative_is_better:
-                    h = self.distance(y, self._e)
+                    # epsilon * h --> high quality                
+                    h = epsilon*self.distance(y, self._e)
                     self._openset[y] = {'g': tentative_g_score, 'h': h, 'f': tentative_g_score + h, 'camefrom': x}
                     if display:
                         self._map_info.open = y

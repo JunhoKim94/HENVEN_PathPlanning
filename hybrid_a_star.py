@@ -34,7 +34,7 @@ class HybridAStar(object):
             #section이 True면 커브와 직선을 나누어서 데이터를 받고 False면 한꺼번에 하나의 list로 받음
             xs, ys, yaws = ReedsSheppPath.gen_path(p, [path], r=self._r, section=False)
             if not self.is_collision_rs_car(xs, ys, yaws):
-                yield (round(xs[-1], 2), round(ys[-1], 2), round(yaws[-1], 2)), path, [xs, ys, yaws]
+                yield (round(xs[-1], 1), round(ys[-1], 1), round(yaws[-1], 2)), path, [xs, ys, yaws]
                 #xs,ys,yaws의 마지막 수를 소수점 2번째까지 반올림 + path + 반올림 하지 않은 [xs,ys,yaws]
                 # local end point, path, 좌표상의 path
                 
@@ -75,16 +75,16 @@ class HybridAStar(object):
 
     def run(self, display=False):
         st = time.time()
+        epsilon = 1.5
         d = self.h_cost(self._s)
         #openset ==> g: 현재노드 코스트 h : 휴리스틱 cost f = g+h camefrom = 부모노드 path = 부모노드에서 현재 노드로 어떻게 왔는지
         self._openset[self._s] = {'g': 0, 'h': d, 'f': d, 'camefrom':None, 'path': []}
         while self._openset:
             #f 값이 가장 작은 openset 원소 == cost가 가장 낮은!
             x = min(self._openset, key=lambda key: self._openset[key]['f'])
-            print(x)
-            self._closeset[x] = deepcopy(self._openset[x])
+            self._closeset[x] = self._openset.pop(x)
             #x를 pop 한 이후 close set에 넣어서 visited node 확인
-            del self._openset[x]
+            
             if display:
                 self._map_info.close = (x[0], x[1])
             rspath = ReedsSheppPath(x, self._e, self._r)
@@ -105,7 +105,7 @@ class HybridAStar(object):
                         self._closeset[self._e] = {'camefrom':x , 'path' : [pat,[xx,yy,yaws2]]}
                         print(time.time()-st)
                         return True
-                
+
             # 가장 짧은 Dubins path의 경로를 좌표경로로 반환
             if not self.is_collision_rs_car(xs, ys, yaws):
                 #xs,ys,yaws 의 path 좌표가 충돌을 안한다면 현재 path로 결정
@@ -115,12 +115,13 @@ class HybridAStar(object):
             for y, path, line in self.neighbors(x):
                 # 골 지점에 도착하지 않았다면 현재 좌표 x에서 neighbors 를 통해 자식 노드를 Span
                 # STEP 사이즈에 따라 임의의 end point를 만들어서 진행 --> neighbor에서 총 6가지의 방법으로 span (l,s,r,-r,-s,-l)
-                if y in self._closeset:
-                    continue
+
                 if display:
                     self._map_info.open = (y[0], y[1])
                 #g = parent's g + x에서 현재까지 주행한 거리
                 tentative_g_score = self._closeset[x]['g'] + (abs(path[1]) if path[0] == 's' else abs(path[1]) * self._r)
+                if y in self._closeset:
+                    continue
                 if y not in self._openset:
                     tentative_is_better = True
                 elif tentative_g_score < self._openset[y]['g']:
@@ -128,7 +129,8 @@ class HybridAStar(object):
                 else:
                     tentative_is_better = False
                 if tentative_is_better:
-                    d = self.h_cost(y)
+                    # epsilon * h --> high quality
+                    d = epsilon*self.h_cost(y)
                     self._openset[y] = {'g': tentative_g_score, 'h': d, 'f': tentative_g_score+d, 'camefrom': x, 'path': [path, line]}
         return False
 
