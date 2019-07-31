@@ -10,7 +10,7 @@ lidar[0:120] = 8
 lidar[120:180] = 5
 lidar[260:360] = 7
 
-video="C:\photo\images/cam_2_short.mp4"
+video="./lower.mp4"
 cap = cv2.VideoCapture(video)
 
 while True:
@@ -18,13 +18,14 @@ while True:
     if not ret:
         print('비디오 끝')
         break
-    cv2.waitKey(3)
     img1 = iu.Make_Binary(img)
     img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
 
-    img2 =cv2.resize(img, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
+    img2 =cv2.resize(img1, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
     pts.make_LIDAR_points(img1, lidar)
-    pts.make_route_points(img1, 15)
+    pts.make_route_points(img1, 8)
+    if cv2.waitKey(1) & 0xFF == 27:
+        break        
 
-cv2.waitKey(0)
+cap.release()
 cv2.destroyAllWindows()

@@ -194,7 +194,7 @@ def make_LIDAR_points(img):
    
 
 #img = cv2.imread('C:\photo\images/blue_lane.jpg', cv2.IMREAD_GRAYSCALE)
-video="C:\\Users\\ybin0\\Desktop\\lane/challenge.mp4"
+video="./challenge.mp4"
 cap = cv2.VideoCapture(video)
 while True:
     ret, img = cap.read()
