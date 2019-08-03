@@ -10,39 +10,27 @@ boundaries = [
     (np.array([200, 0, 140], dtype="uint8"), np.array([255, 255, 255], dtype="uint8")) # white
 ]
 
-line_colors = [
-    [0, 0, 255], # red
-    [255, 0, 0], # blue
-    [0, 255, 255], # yellow
-    [255, 255, 255] # white
-]
-
 kernel = np.ones((7,7), np.uint8)
 
 # points for perspective_transform
-pts1 = np.float32([(790, 898), (470, 1080), (1610, 1080), (1290, 898)])
-pts2 = np.float32([(480, 0), (480, 1000), (960, 1000), (960, 0)])
+pts1 = np.float32([(328, 373), (110, 454), (600, 454), (471, 373)])
+pts2 = np.float32([(120, 0), (120, 250), (240, 250), (240, 0)])
 
 # 디스플레이 창 크기
-display = (1440, 960)
+display = (360, 240)
 
 # roi 범위 설정
-vertics = np.array([[(790, 898), (470, 1080), (1610, 1080), (1290, 898)]]
-                       ,np.int32)
-#720, 960
+vertics = np.array([[(0, 360), (0, 480), (770, 480), (770, 360)]])
+#720, 960s
 def Warp_Image(img):
-    image_size = (img.shape[1], img.shape[0])
     M = cv2.getPerspectiveTransform(pts1, pts2)
     warped_img = cv2.warpPerspective(img, M, display)
     return warped_img
 
 def reg_of_int(img):
-    img_h = img.shape[0]
-    img_w = img.shape[1]
     mask = np.zeros_like(img)
     cv2.fillPoly(mask, vertics, (255,255,255))
     masked = cv2.bitwise_and(img, mask)
-    mask2 = masked
     return masked
 
 def DetectColor(img, color): # color = b, r, y, w
@@ -79,6 +67,8 @@ def OpenImage(img):
 
 def Make_Binary(img):
     img = reg_of_int(img)
+    img3 = cv2.resize(img, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
+    cv2.imshow('roi', img3)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     warp_img = Warp_Image(img)
     img1 = np.zeros_like(warp_img)

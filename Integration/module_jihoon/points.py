@@ -2,33 +2,33 @@ import cv2
 import numpy as np
 
 #왼쪽라인 보정상수
-line_constant1 = -50
+line_constant1 = -10
 #오른쪽라인 보정상수
 line_constant2 = +10
 #조사창 최대 픽셀 수
-max_pixel_num = 700
+max_pixel_num = 233
 #조사창 최소 픽셀 수
-min_pixel_num = 300
+min_pixel_num = 10
 #픽셀 평행이동 상수
-shift_pixel = 410
+shift_pixel = 102
 #다항식 차수
-poly_order = 3
+poly_order = 2
 #차이 상수(아래 점 포인트와 위의 점 포인트 간 최대 픽셀 거리차)
 del_cons = 30
 
 #이전 조사창 중점 위치 저장하는 배열, 조사창 개수가 바뀔 때 변경해줘야함
 x1_points1 = []
-x1_points1 = [None for _ in range(15)]
+x1_points1 = [None for _ in range(3)]
 x1_points2 = []
-x1_points2 = [None for _ in range(15)]
+x1_points2 = [None for _ in range(3)]
 x1_points3 = []
-x1_points3 = [None for _ in range(15)]
+x1_points3 = [None for _ in range(3)]
 x2_points1 = []
-x2_points1 = [None for _ in range(15)]
+x2_points1 = [None for _ in range(3)]
 x2_points2 = []
-x2_points2 = [None for _ in range(15)]
+x2_points2 = [None for _ in range(3)]
 x2_points3 = []
-x2_points3 = [None for _ in range(15)]
+x2_points3 = [None for _ in range(3)]
 
 def draw_points(img, x_points, y_points, color, thickness=3):
     if(len(x_points) != len(y_points)):
