@@ -1,6 +1,8 @@
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
+import channelplus as cp
+import Image_util as iu
 
 def reg_of_int(img):
     img_h = img.shape[0]
@@ -28,11 +30,13 @@ def smoothing(img):
 
 def perspective_transform(img):
     h, w = img.shape[:2]
+    #480, 360
     pts1 = np.float32([(275, 240), (403, 240), (527, 332), (151, 332)])
-    pts2 = np.float32([(70, 0), (410, 0), (380, 320), (100, 320)])
+    pts2 = np.float32([(550, 0), (890, 0), (860, 480), (580, 480)])
 
     M = cv2.getPerspectiveTransform(pts1, pts2)
-    tran_img = cv2.warpPerspective(img, M, (480,320))
+    tran_img = cv2.warpPerspective(img, M, (1440,480))
+    #720, 480
 
     return tran_img
 
@@ -61,9 +65,9 @@ def draw_points(img, x_points, y_points, color=[0,255,0], thickness=3):
         print("error2")
         
 #rho : hough space에서 원점으로 부터의 거리를 뜻하는 것(보통 1)
-    # 얼마씩 증가시키면서 살필 것이지를 정함
+# 얼마씩 증가시키면서 살필 것이지를 정함
 #theta : 단위는 라디언 (도 * pi/ 180) 마찬가지로 보통 1이고
-    # 얼마씩 증가시키면서 살필 것이지를 정함
+# 얼마씩 증가시키면서 살필 것이지를 정함
 #threshold : 직선으로 인식하는 최소 갯수(교점이 x-y에서 직선이됨)
 #min_line_length : 선분의 최소 길이
 #max_line_gap : 선 위의 점들 사이 최대 거리
@@ -85,7 +89,6 @@ def make_points(img, n_windows, x1_default = 110, x2_default =120):
     cv2.imshow('img', img)
     h, w = img.shape[:2]
     result = np.zeros_like(img)
-    print(h, w)
     
     y_points = []
     # 조사창의 간격 정하기
@@ -158,24 +161,20 @@ def make_points(img, n_windows, x1_default = 110, x2_default =120):
     cv2.imshow('result_left', img1)
     cv2.imshow('result_right', img2)
     
-    
-
-#img = cv2.imread('C:\photo\images/blue_lane.jpg', cv2.IMREAD_GRAYSCALE)
+#img = cv2.imread('C:\photo\images/blue_lane.jpg')
 video="C:\photo\images/challenge.avi"
 cap = cv2.VideoCapture(video)
 while True:
     ret, img = cap.read()
-    
     if not ret:
         print('비디오 끝')
         break
-    
-    cv2.waitKey(10)
-    img = img2 =cv2.resize(img, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
-  #  cv2.imshow("img", img)
-    cv2.imwrite("05img.jpg",img)
+    cv2.waitKey(5)
+    img = cp.channelplus(img)
+    img = cv2.resize(img, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img = smoothing(img)
+    cv2.imshow('wow', img)
     binary_img = bin_img(img)
     cv2.imshow('bin', binary_img)
     masked_img = reg_of_int(binary_img)
