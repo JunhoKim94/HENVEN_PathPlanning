@@ -40,3 +40,5 @@ Q 버튼을 누르면 수동조작모드 // 기어는 N이 기본값이므로 �
 U 버튼을 누르면 GUI 노출 <br>
 화살표 키로 조작가능 <br>
 +,- 버튼로 기어 조절 (1은 전진, N은 중립, R은 후진)
+
+https://www.dropbox.com/sh/aehpeb0hj5zb9sq/AAAikMP8EySX3nxmWIl0siuMa/%EB%A7%A4%EB%89%B4%EC%96%BC%20%EB%B0%8F%20%EC%B0%B8%EA%B3%A0%EC%9E%90%EB%A3%8C?dl=0&preview=1_%EB%A7%A4%EB%89%B4%EC%96%BC+-+00+%EA%B0%9C%EC%9A%94.pdf&subfolder_nav_tracking=1
