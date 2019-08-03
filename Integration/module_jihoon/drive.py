@@ -20,7 +20,7 @@ while True:
         break
     img = cv2.resize(img,dsize = (854,480),interpolation = cv2.INTER_AREA)
     img1 = iu.Make_Binary(img)
-    img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+    #img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
     #cv2.waitKey(1)
     cv2.imshow("fff",img1)
     img2 =cv2.resize(img1, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
