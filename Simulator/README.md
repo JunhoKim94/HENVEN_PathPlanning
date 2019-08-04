@@ -34,6 +34,13 @@ CAM1_PARMS = {"SOCKET_TYPE": 'JPG',
         "ROLL": 0}
 ```
 
+# 시뮬레이터에서 로그 받는 법
+
+시뮬레이터를 킨 다음 Simulator-record.py 실행합니다. <br>
+1차원 배열 형태로 현재 상황의 데이터가 실시간으로 계속 출력됩니다. <br>
+[gps, platform, main_cam, sub_cam, lidar] <br> <br>
+
+
 ## 기초적인 시뮬레이터 조작법
 
 Q 버튼을 누르면 수동조작모드 // 기어는 N이 기본값이므로 기어조절 후 조작하기 <br>
