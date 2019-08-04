@@ -15,12 +15,13 @@ class Lidar:
 
 
 
-### Lane_Detection.py
+### Lane_Detection.py  # input은 이미지
 ```
 class Lane_Detection:
     def __init__(self):  # 초기화
     def left_line(self):  # numpy로 넘겨줌(이미지로)
     def right_line(self):  # numpy로 넘겨줌(이미지로)
+    def combine_line(self):  # 둘다 출력하는 함수
     def get_stop_line(self):  # 정지선을 반환하는 코드(정지선 제일 앞 부분)
 ```
 
@@ -99,6 +100,6 @@ class Mission:
 class YOLO:
     def __init__(self):  # 초기화
     def get_mission_number(self):
-    def is_school_zone(self):
-    def traffic_light(self):
+    def is_school_zone(self):  # school zone이면 1, school zone이 아니면 0
+    def traffic_light(self):  # red 0, green 1, curve 2
 ```
