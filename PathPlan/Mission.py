@@ -24,15 +24,16 @@
 '''
 
 ########### IMPORT MODULE ###########
-from Lane_Detection import Lane
-from Combine import Combine_lane_lidar
+from Lane_Detection import Lane_Detection
+from Combine import Combine
+from Path_Planning import Path_Planning
 # from YOLO import yolo
 import time
 #####################################
 
 ########## IMPORT INSTANCE ##########
-lane = Lane()
-combine_lane_lidar = Combine_lane_lidar()
+# lane_detection = Lane_Detection()
+# combine = Combine()
 # yolo = yolo()
 #####################################
 
@@ -41,7 +42,8 @@ combine_lane_lidar = Combine_lane_lidar()
 class Mission:
     def __init__(self, mission_num):
         self._mission_num = mission_num  # 기본값은 0
-        self.packet = [self._mission_num, [(0,0)], None, None, 0]  # default
+        self.packet = [mission_num, [(0,0)], None, None, 0]  # default
+        self._path_planning = Path_Planning(mission_num)
 
     def get_packet(self):
         if self._mission_num == 0:
@@ -69,46 +71,50 @@ class Mission:
 
     ## 0. 직선 주행(기본 주행)
     def _path_tracking(self):
-        self.packet[1] = lane.make_points
+        self.packet[1] = self._path_planning.get_path()
         self.packet[4] = yolo.is_school_zone()
 
     ## 1. 정적 장애물 미션
     def _static_obstacle(self):
-        self.packet[1] = combine_lane_lidar.make_points()
+        self.packet[1] = self._path_planning.get_path()
 
     ## 2. 동적 장애물 미션
     def _dynamic_obstacle(self):
-        self.packet[1] = combine_lane_lidar.make_points()
+        self.packet[1] = self._path_planning.get_path()
+        yolo = YOLO()
         self.packet[4] = yolo.is_school_zone()
 
     ## 3. 비신호 직진 미션
     def _non_signal_straight(self):
-        self.packet[1] = lane.make_points()
+        self.packet[1] = self._path_planning.get_path()
 
     ## 4. 비신호 좌회전 미션
     def _non_signal_left(self):
-        self.packet[1] = lane.make_point()
+        self.packet[1] = self._path_planning.get_path()
 
     ## 5. 비신호 우회전 미션
     def _non_signal_right(self):
-        self.packet[1] = lane.make_points()
+        self.packet[1] = self._path_planning.get_path()
 
     ## 6. 신호 좌회전 미션
     def _signal_left(self):
-        self.packet[1] = lane.make_points()
-        self.packet[2] = -1  # 정지선까지 거리
-        self.packet[3] = -1  # 좌회전신호 판단 >> 주행 가능: 1, 멈춤: 0
+        self.packet[1] = self._path_planning.get_path()
+        lane_detection = Lane_Detection()
+        self.packet[2] = lane_detection.get_stop_line()  # 정지선까지 거리
+        yolo = YOLO()
+        self.packet[3] = yolo.traffic_light()  # 좌회전신호 판단 >> 주행 가능: 1, 멈춤: 0
         self.packet[4] = yolo.is_school_zone()
 
     ## 7. 신호 직진 미션
     def _signal_straight(self):
-        self.packet[1] = lane.make_points()
-        self.packet[2] = -1  # 정지선까지 거리
-        self.packet[3] = -1  # 적색 신호 판단 >> 주행 가능: 1, 멈춤: 0
+        self.packet[1] = self._path_planning.get_path()
+        lane_detection = Lane_Detection()
+        self.packet[2] = lane_detection.get_stop_line()  # 정지선까지 거리
+        yolo = YOLO()
+        self.packet[3] = yolo.traffic_light()  # 적색 신호 판단 >> 주행 가능: 1, 멈춤: 0
 
     ## 8. 주차 미션
     def _parking(self):
-        self.packet[1] = combine_lane_lidar.make_points()
-        self.packet[2] = time.time()  # 미션 경과 시간
+        self.packet[1] = self._path_planning.get_path()
 
     #####################################
